@@ -2,75 +2,64 @@ from bottle import *
 from collections import OrderedDict
 from operator import itemgetter
 
-counter = 0
 mainword=""
-maintablestring=""
-maindict=OrderedDict()
+maintblstr=""
+maindict=OrderedDict() #creating ordered dictionary "maindict"
 
-@route('/', method="GET")
+@route('/', method="GET") #getting user query
 
 def main():
-    global counter
-    counter = counter + 1
-    print "This is counter:", counter
-    
-    print "You are now in main"
-
-    global mainword #declaring word string
-    global maintablestring
-    global maindict #declaring ordered dictionary datastructure
+    global mainword #declaring global word string
+    global maintblstr
+    global maindict #declaring global ordered dictionary datastructure
     mainqueryresult = request.query['keywords'].lower() #requesting 'keywords' from HTML and making it lowercase
     mainquerylist = mainqueryresult.split(" ") #splitting queryresult by the spaces and reversing it
     
-    for mainword in mainquerylist:
-        if mainword not in maindict:
-            maindict[mainword]=1
-        else:
-            maindict[mainword] +=1
+    for mainword in mainquerylist: #for each word in user query
+        if mainword not in maindict: #check if the word does not exist in the main dictionary
+            maindict[mainword]=1 #if nonexistent, add it in and count value = 1
+        else:                       #else word does exist in main dictionary
+            maindict[mainword] +=1  #increase count value by 1
 
-    mainsearchstring = "Search for <i>\"{querystring}\" </i> ".format(querystring=request.query['keywords'])
-    maintableheader = "<tr> <td> <b> Word </b> </td> <td> <b> Count </b> </td></tr>"
-    maintablebeginning = "<table id = \"results\">"
-    maintableend = "</table>"
+    mainsearchstring = "Search for <i>\"{querystring}\" </i> ".format(querystring=request.query['keywords'])    #SHOWS ON RESULT PAGE: top to show what user queried
+    maintableheader = "<tr> <td> <b> Word </b> </td> <td> <b> Count </b> </td></tr>"                            #SHOWS ON RESULT PAGE: header of table
+    maintablebeginning = "<table id = \"results\">"                                                             #SHOWS ON RESULT PAGE: table id beginning
+    maintableend = "</table>"                                                                                   #SHOWS ON RESULT PAGE: table id ender
 
-    for k, v in maindict.iteritems():
-        maintablestring = maintablestring + "<tr> <td> {queryword} </td> <td> {querycount} </td>".format(queryword=k, querycount=v)
-    mainresultstring = mainsearchstring + maintablebeginning + maintableheader + maintablestring + maintableend
+    for k, v in maindict.iteritems(): #for each key and value in maindictionary, go through each item
+        maintblstr = maintblstr + "<tr> <td> {queryword} </td> <td> {querycount} </td>".format(queryword=k, querycount=v) #add each item as a row in the table HTML format
+    mainresultstring = mainsearchstring + maintablebeginning + maintableheader + maintblstr + maintableend #SHOWS ON RESULT PAGE: add all strings together
 
     return results()
 
 def results():
     i=0
-    global maindict
+    global maindict #declaring global main dictionary used in main()
     word="" #declaring word string
-    tablestring=""
+    tblstr=""
     dict=OrderedDict() #declaring ordered dictionary datastructure
     newdict=OrderedDict()
     queryresult = request.query['keywords'].lower() #requesting 'keywords' from HTML and making it lowercase
     querylist = queryresult.split(" ")#splitting queryresult by the spaces and reversing it
-    print querylist
-    for word in querylist:
-        if word in maindict:
-            dict[word]=maindict[word]
-        elif word not in dict:
+    for word in querylist: #for each word in user query
+        if word in maindict: #if the word exists in main dictionary (saved as server runs)
+            dict[word]=maindict[word] #make the count of current results dictionary = count of main dictionary
+        elif word not in dict: #if word is not in the results dictionary, add it and assign it a count of 1
             dict[word]=1
-        else:
+        else:           #if word is in results dictionary, increase the count by 1
             dict[word] +=1
-    print "this is results dict"
-    print dict
     searchstring = "Search for <i>\"{querystring}\" </i> ".format(querystring=request.query['keywords'])
     tableheader = "<tr> <td> <b> Word </b> </td> <td> <b> Count </b> </td></tr>"
     tablebeginning = "<table id = \"results\">"
     tableend = "</table>"
-    newdict = sorted(dict, key=dict.get, reverse=True) #returns new dict list of values...not dictionary
-    newdict = newdict[:20]
-    print "This is new dict:", newdict
-    for newdictword in newdict:
-        tablestring = tablestring + "<tr> <td> {queryword} </td> <td> {querycount} </td>".format(queryword=newdictword, querycount=dict[newdictword])
-    resultstring = searchstring + tablebeginning + tableheader + tablestring + tableend
+    newdict = sorted(dict, key=dict.get, reverse=True) #returns new dict list of values sorted by decreasing # of counts...not a dictionary
+    newdict = newdict[:20] #cut the sorted new dict list to only 20 elements (highest count decreasing)
+    for newdictword in newdict: #for each word in the 20 element list
+        tblstr = tblstr + "<tr> <td> {queryword} </td> <td> {querycount} </td>".format(queryword=newdictword, querycount=dict[newdictword]) #add the word in 20 element list and it's value in results dictionary
+    resultstring = searchstring + tablebeginning + tableheader + tblstr + tableend
         #for k, v in dict.iteritems():
-            #tablestring = tablestring + "<tr> <td> {queryword} </td> <td> {querycount} </td>".format(queryword=k, querycount=v)
-        #resultstring = searchstring + tablebeginning + tableheader + tablestring + tableend
+            #tblstr = tblstr + "<tr> <td> {queryword} </td> <td> {querycount} </td>".format(queryword=k, querycount=v)
+        #resultstring = searchstring + tablebeginning + tableheader + tblstr + tableend
     return resultstring;
 
 run(hosts='localhost', port=8080, debug=True)
