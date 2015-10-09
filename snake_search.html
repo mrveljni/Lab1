@@ -2,17 +2,18 @@
 
     
 <body>
+
 <br>
 <h1> SSSnake SSSearch! </h1>
 
 <img src="snake5.jpg" alt="Snake" style="width:150px;height:150px;">
     <br><br><br>
 
-<form name="snake_query" action="snake_results.py" method="GET">
+<form name="snake_query" action="http://localhost:8080" method="GET">
 <!-- <form id = "form1"> -->
     Please input your search query in the box below:
     <br>
-    <input id="queryline" type="text" name="keywords" placeholder="Your query"> </input>
+    <input name="keywords" type="text" placeholder="Your query"> </input>
     <br>
     <br>
     <input type="submit" value="submit"></input>
