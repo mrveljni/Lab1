@@ -1,7 +1,6 @@
 <html>
 
-    
-<body>
+<body style="text-align: center; background-image: url('background.png')">
 
 <br>
 <h1> SSSnake SSSearch! </h1>
@@ -11,13 +10,12 @@
 
 <form name="snake_query" action="http://localhost:8080" method="GET">
 <!-- <form id = "form1"> -->
-    Please input your search query in the box below:
+    <h3>Please input your search query in the box below:</h3>
+    <input style="width:400px; height: 20px" name="keywords" type="text" placeholder="Your query"> </input>
     <br>
-    <input name="keywords" type="text" placeholder="Your query"> </input>
     <br>
-    <br>
-    <input type="submit" value="submit"></input>
-    
+    <input style="width:200px; height:100px" type="submit" value="SSSearch!"></input>
+
 </form>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
